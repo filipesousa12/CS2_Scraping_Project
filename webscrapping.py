@@ -1,6 +1,6 @@
 from time import sleep
 import pandas as pd
-from selenium.webdriver.common.by import By  # Import By class
+from selenium.webdriver.common.by import By  
 from selenium.webdriver.chrome.options import Options
 from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
@@ -26,7 +26,7 @@ def log_error(message):
     '''
     Function to produce an errorfile for that specific day
     Parameter:
-        message-> The error message coming from the exception in each function used
+        message(string ?)-> The error message coming from the exception in each function used
     '''
 
     error_folder = "error_messages"
@@ -49,7 +49,7 @@ def getMatches(url):
     '''
     This function gets the data of each match.
     Parameter:
-        url -> url of the page results from hltv 
+        url(String) -> url of the page results from hltv 
     '''
    
     try:
@@ -121,7 +121,7 @@ def getplayers(url):
     '''
     This function fetches all the players in a specific match
     Parameter:
-        url-> the url of a specific match 
+        url(string) -> the url of a specific match 
     '''
  
     try:
@@ -155,8 +155,8 @@ def playerdetails(url,df):
     '''
     This function gets all the details about a player
     Parameters:
-        url-> url of the player
-        df -> the players dataset to enrich with the player's information
+        url(string)-> url of the player
+        df (pandas dataframe) -> the players dataset to enrich with the player's information
     '''
 
     try:
@@ -191,7 +191,7 @@ def getevents(url):
     '''
     Gets the event that each match was played 
     Parameter:
-        url-> the url of a specific match 
+        url(string) -> the url of a specific match 
     '''
     try:
         browser=connection()
@@ -229,11 +229,10 @@ def extract():
     events = pd.DataFrame(pcolumns=['event'])
     
     for match in matches['link']:
-        print(match)
+        event = getevents(match)
         player = getplayers(match)
-        print(getplayers(match))
         players = pd.concat([players,player], ignore_index=True)
-        events = pd.concat([events,getevents(match)], ignore_index=True)
+        events = pd.concat([events,event], ignore_index=True)
         
     players.drop_duplicates(inplace=True)
     #Extract the matchid 
@@ -242,4 +241,15 @@ def extract():
     events.drop_duplicates(inplace=True)
     events['event_id'] = events['event'].str.extract(r'/events/(\d+)/')
 
-    #Still need to add the data daily data dump
+    #Check if the folders exists if not it will create one (This functionality will go away once i move it to a cloud provider)
+    os.makedirs('matches', exist_ok=True)
+    os.makedirs('players', exist_ok=True)
+    os.makedirs('events', exist_ok=True)
+
+    current_date = datetime.now().strftime("%Y-%m-%d")
+    matches.to_parquet('matches/matches_{current_date}.parquet')
+    players.to_parquet('players/players_{current_date}.parquet')
+    events.to_parquet('events/events_{current_date}.parquet')
+    
+
+
