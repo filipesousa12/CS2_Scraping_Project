@@ -226,10 +226,11 @@ def extract():
 
     '''
     results_page = 'https://www.hltv.org/results'
+ 
     matches = getMatches(results_page)
 
     players = pd.DataFrame(columns=['player'])
-    events = pd.DataFrame(pcolumns=['event'])
+    events = pd.DataFrame(columns=['event'])
     
     for match in matches['link']:
         event = getevents(match)
@@ -244,15 +245,17 @@ def extract():
     events.drop_duplicates(inplace=True)
     events['event_id'] = events['event'].str.extract(r'/events/(\d+)/')
 
+  
     #Check if the folders exists if not it will create one (This functionality will go away once i move it to a cloud provider)
     os.makedirs('matches', exist_ok=True)
     os.makedirs('players', exist_ok=True)
     os.makedirs('events', exist_ok=True)
 
+   
     current_date = datetime.now().strftime("%Y-%m-%d")
-    matches.to_parquet('matches/matches_{current_date}.parquet')
-    players.to_parquet('players/players_{current_date}.parquet')
-    events.to_parquet('events/events_{current_date}.parquet')
+    matches.to_parquet(f'matches/matches_{current_date}.parquet')
+    players.to_parquet(f'players/players_{current_date}.parquet')
+    events.to_parquet(f'events/events_{current_date}.parquet')
     
 
 
