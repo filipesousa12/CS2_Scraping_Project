@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: cs2  # Source name for the external data
+    #schema: external_files  # Schema name for organization; doesn't create a schema
+    tables:
+      - name: matches  # Logical table name in dbt
+        description: "Match data from the CS2 scraping project stored as Parquet."
+        meta:
+          external_location: "read_parquet(['C:\\Users\\filip\\Desktop\\CS2_Scraping_Project\\matches\\matches.parquet'])"
+      
+      - name: events  # Logical table name in dbt
+        description: "events data from the CS2 scraping project stored as Parquet."
+        meta:
+          external_location: "read_parquet(['C:\\Users\\filip\\Desktop\\CS2_Scraping_Project\\matches\\events.parquet'])"
+
+      - name: players  # Logical table name in dbt
+        description: "players data from the CS2 scraping project stored as Parquet."
+        meta:
+          external_location: "read_parquet(['C:\\Users\\filip\\Desktop\\CS2_Scraping_Project\\matches\\players.parquet'])"

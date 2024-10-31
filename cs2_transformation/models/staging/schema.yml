@@ -1,0 +1,89 @@
+version: 2
+
+models:
+  - name: matches
+    description: "Data of the matches coming from webscrapping"
+    columns:
+      - name: link
+        description: "link of the match"
+        data_test:
+          - not_null
+      
+      - name: match_id
+        description: "match id"
+        data_test:
+          - not_null
+      
+      - name: team_1
+        description: "name of the team 1"
+        data_test:
+          - not_null
+
+      - name: team_2
+        description: "name of the team 2"
+        data_test:
+          - not_null
+
+      - name: event
+        description: "name of the event"
+        data_test:
+          - not_null
+
+      - name: match_type
+        description: "The type of the match"
+        data_test:
+          - not_null
+
+      - name: score_t1
+        description: "The score of team 1"
+        data_test:
+          - not_null
+
+      - name: score_t2
+        description: "The score of team 2"
+        data_test:
+          - not_null
+
+  - name: events
+    description: "Data of the events coming from webscrapping"
+    columns:
+      - name: event
+        description: "the name of the event"
+        data_test:
+          - not_null
+      - name: event_id
+        description: "the id of the event"
+        data_test:
+          - not_null
+
+  - name: players
+    description: "Data of the players coming from webscrapping"
+    columns:
+      - name: player
+        description: "the nickname of the player"
+        data_test:
+          - not_null
+      - name: player_id
+        description: "the id of the player"
+        data_test:
+          - not_null
+
+      - name: Name
+        description: "the name of the player"
+        data_test:
+          - not_null
+
+      - name: nationality
+        description: "the nationality of the player"
+        data_test:
+          - not_null
+
+      - name: age
+        description: "the age of the player"
+        data_test:
+          - not_null
+
+      - name: team
+        description: "the team of the player"
+        data_test:
+          - not_null

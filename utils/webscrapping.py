@@ -6,6 +6,7 @@ from selenium import webdriver
 from selenium.webdriver.firefox.options import Options
 import os
 from datetime import datetime
+import logging
 
 
 
@@ -14,15 +15,20 @@ def connection():
     '''
     This function creates the connection to the browser. 
     '''
-    # Set up firefox options to run in headless mode
-    options = Options()
-    options.add_argument("--headless")
-    options.add_argument("--disable-gpu")   
-    options.add_argument("--no-sandbox")
-    options.add_argument("--disable-extensions")
-    driver = webdriver.Firefox(options=options)
+    try:
+        # Set up firefox options to run in headless mode
+        options = Options()
+        options.add_argument("--headless")
+        options.add_argument("--disable-gpu")   
+        options.add_argument("--no-sandbox")
+        options.add_argument("--disable-extensions")
+        driver = webdriver.Firefox(options=options)
 
-    return driver
+        return driver
+    except Exception as e:
+        logging.error(f"Failed to initialize WebDriver: {str(e)}")
+        raise
+
 
 def log_error(message):
     
@@ -199,7 +205,7 @@ def getevents(url):
     try:
         browser=connection()
 
-        browser.get('url')
+        browser.get(url)
             
         events = browser.find_element(By.CLASS_NAME, 'timeAndEvent').find_element(By.CLASS_NAME, 'text-ellipsis')
 
@@ -226,36 +232,38 @@ def extract():
 
     '''
     results_page = 'https://www.hltv.org/results'
- 
     matches = getMatches(results_page)
-
-    players = pd.DataFrame(columns=['player'])
-    events = pd.DataFrame(columns=['event'])
-    
-    for match in matches['link']:
-        event = getevents(match)
-        player = getplayers(match)
-        players = pd.concat([players,player], ignore_index=True)
-        events = pd.concat([events,event], ignore_index=True)
+    if matches is None or matches.empty:
+        print("deu merda")
+        print(connection())
+    else:
+        players = pd.DataFrame(columns=['player'])
+        events = pd.DataFrame(columns=['event'])
         
-    players.drop_duplicates(inplace=True)
-    #Extract the matchid 
-    players['player_id'] = players['player'].str.extract(r'/player/(\d+)/')
+        for match in matches['link'][:2]:
+            event = getevents(match)
+            player = getplayers(match)
+            players = pd.concat([players,player], ignore_index=True)
+            events = pd.concat([events,event], ignore_index=True)
+            
+        players.drop_duplicates(inplace=True)
+        #Extract the matchid 
+        players['player_id'] = players['player'].str.extract(r'/player/(\d+)/')
 
-    events.drop_duplicates(inplace=True)
-    events['event_id'] = events['event'].str.extract(r'/events/(\d+)/')
+        events.drop_duplicates(inplace=True)
+        events['event_id'] = events['event'].str.extract(r'/events/(\d+)/')
 
-  
-    #Check if the folders exists if not it will create one (This functionality will go away once i move it to a cloud provider)
-    os.makedirs('matches', exist_ok=True)
-    os.makedirs('players', exist_ok=True)
-    os.makedirs('events', exist_ok=True)
+    
+        #Check if the folders exists if not it will create one (This functionality will go away once i move it to a cloud provider)
+        os.makedirs('matches', exist_ok=True)
+        os.makedirs('players', exist_ok=True)
+        os.makedirs('events', exist_ok=True)
 
-   
-    current_date = datetime.now().strftime("%Y-%m-%d")
-    matches.to_parquet(f'matches/matches_{current_date}.parquet')
-    players.to_parquet(f'players/players_{current_date}.parquet')
-    events.to_parquet(f'events/events_{current_date}.parquet')
+    
+        current_date = datetime.now().strftime("%Y-%m-%d")
+        matches.to_parquet(f'matches/matches_{current_date}.parquet')
+        players.to_parquet(f'players/players_{current_date}.parquet')
+        events.to_parquet(f'events/events_{current_date}.parquet')
     
 
 

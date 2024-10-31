@@ -1,0 +1,27 @@
+
+# Name your project! Project names should contain only lowercase characters
+# and underscores. A good package name should reflect your organization's
+# name or the intended use of these models
+name: 'cs2_transformation'
+version: '1.0.0'
+
+# This setting configures which "profile" dbt uses for this project.
+profile: 'cs2_transformation'
+
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+clean-targets:         # directories to be removed by `dbt clean`
+  - "target"
+  - "dbt_packages"
+
+models:
+  cs2_transformation:
+    # Config indicated by + and applies to all files under models/example/
+    staging:
+      +materialized: view

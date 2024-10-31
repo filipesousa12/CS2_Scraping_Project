@@ -1,0 +1,10 @@
+cs2_transformation:
+  outputs:
+    dev:
+      type: duckdb
+      path: C:\\Users\\filip\\Desktop\\CS2_Scraping_Project\\duckdb\\cs2.duckdb
+      threads: 1
+      extension:
+        - httpfs
+        - parquet
+  target: dev
